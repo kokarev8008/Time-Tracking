@@ -10,9 +10,8 @@ public class ControllerCase : MonoBehaviour
     [SerializeField] private Transform _caseTemplate;
 
     private void Awake()
-    {
-        if(Instance == null)
-            Instance = this;
+    {        
+        Instance = this;
 
         ControllerSector.Instance.OnAddCase.RemoveAllListeners();
 
