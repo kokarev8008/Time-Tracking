@@ -22,12 +22,12 @@ public class ControllerCase : MonoBehaviour
 
             ControllerSector.Instance.sectorsViewList[^1].caseViewsList.Add(caseTransform.AddComponent<CaseView>());
 
-            ControllerSector.Instance.shelldataSectorList.DataSectorList[^1].CaseList.Add(new DataSector.DataCase() 
+            ControllerSector.Instance.shellDataSectorList.DataSectorList[^1].CaseList.Add(new DataSector.DataCase() 
             {
                 TimeTrackingText = obj.CurrentTimeTracking,
             });
 
-            JsonServiceUtility.SaveData(ControllerSector.Instance.shelldataSectorList);
+            JsonServiceUtility.SaveData(ControllerSector.Instance.shellDataSectorList);
         });
     }
 

@@ -23,11 +23,16 @@ public class TimeTrackingUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _timeText;
     [SerializeField] private TextMeshProUGUI _currentDateText;
 
+    [SerializeField] private Button _pauseButton;
+    [SerializeField] private Sprite _pauseSprite;
+    [SerializeField] private Sprite _playSprite;
+
     private float timerSec;
     private float timerMin;
     private float timerHour;
 
     private bool _isStarting = false;
+    private bool _isPlay = true;
 
     private void Awake()
     {
@@ -38,13 +43,22 @@ public class TimeTrackingUI : MonoBehaviour
         {
             _isStarting = !_isStarting;
 
-            if(_isStarting)
+            if(_isStarting && _isPlay)
             {
+                _pauseButton.gameObject.SetActive(true);
+
                 _startEndTimeTrackingText.text = "Stop";
             }
             else
             {
-                _startEndTimeTrackingText.text = "Start Tracking";
+                _pauseButton.gameObject.SetActive(false);
+
+                _isStarting = false;
+                _isPlay = true;
+
+                _pauseButton.GetComponent<Image>().sprite = _pauseSprite;
+
+                _startEndTimeTrackingText.text = "Start";
 
                 OnCheckSector?.Invoke(new OnCheckSectorAction
                 {
@@ -62,7 +76,25 @@ public class TimeTrackingUI : MonoBehaviour
             Application.Quit();
         });
 
-        _currentDateText.text = $"{DateTime.Today.ToString("d")}\n{DateTime.Today.DayOfWeek}";
+        _pauseButton.onClick.AddListener(() =>
+        {
+            _isPlay = !_isPlay;
+
+            if(!_isPlay)
+            {
+                _pauseButton.GetComponent<Image>().sprite = _playSprite;
+                _isStarting = false;
+            }
+            else
+            {
+                _pauseButton.GetComponent<Image>().sprite = _pauseSprite;
+                _isStarting = true;
+            }
+        });
+
+        _pauseButton.gameObject.SetActive(false);
+
+        _currentDateText.text = $"{DateTime.Today:d}\n{DateTime.Today.DayOfWeek}";
     }
 
     private void Start()
@@ -76,7 +108,7 @@ public class TimeTrackingUI : MonoBehaviour
         {
             yield return new WaitForSeconds(30f);
 
-            _currentDateText.text = $"{DateTime.Today.ToString("d")}\n{DateTime.Today.DayOfWeek}";
+            _currentDateText.text = $"{DateTime.Today:d}\n{DateTime.Today.DayOfWeek}";
         }
     }
 

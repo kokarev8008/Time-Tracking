@@ -43,8 +43,6 @@ public static class JsonServiceUtility
         }
     }
 
-    //Добавить метод для перезаписи данных в JSON   
-
     private static string BuildPath(string key)
     {
         return Path.Combine(Application.persistentDataPath, key);

@@ -13,11 +13,11 @@ public class CaseView : MonoBehaviour
         {
             SectorView sectorView = GetComponentInParent<SectorView>();
 
-            ControllerSector.Instance.shelldataSectorList
+            ControllerSector.Instance.shellDataSectorList
             .DataSectorList[ControllerSector.Instance.sectorsViewList.IndexOf(sectorView)]
             .CaseList.RemoveAt(sectorView.caseViewsList.IndexOf(this));
 
-            JsonServiceUtility.SaveData(ControllerSector.Instance.shelldataSectorList);
+            JsonServiceUtility.SaveData(ControllerSector.Instance.shellDataSectorList);
 
             Destroy(this.gameObject);
         });

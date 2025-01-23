@@ -18,7 +18,7 @@ public class ControllerSector : MonoBehaviour
     [SerializeField] private Transform _containerSectors;
     [SerializeField] private Transform _sectorTemplate;
 
-    [HideInInspector] public ShellListDataSector shelldataSectorList;
+    [HideInInspector] public ShellListDataSector shellDataSectorList;
     [HideInInspector] public List<SectorView> sectorsViewList = new();
 
     private List<DateTime> dateTimesList = new();
@@ -28,7 +28,7 @@ public class ControllerSector : MonoBehaviour
         if (Instance == null)
             Instance = this;
 
-        shelldataSectorList = JsonServiceUtility.LoadData<ShellListDataSector>() ?? new ShellListDataSector();   
+        shellDataSectorList = JsonServiceUtility.LoadData<ShellListDataSector>() ?? new ShellListDataSector();   
 
         TimeTrackingUI.Instance.OnCheckSector.AddListener(TimeTrackingUI_OnAddSector);
     }
@@ -56,7 +56,7 @@ public class ControllerSector : MonoBehaviour
 
             sectorsViewList.Add(sectorTransform.AddComponent<SectorView>());
 
-            shelldataSectorList.DataSectorList.Add(new DataSector()
+            shellDataSectorList.DataSectorList.Add(new DataSector()
             {
                 DateTimeText = textDateTime,
             });
@@ -71,7 +71,7 @@ public class ControllerSector : MonoBehaviour
     private void LoadData()
     {
         int index = 0;
-        foreach (DataSector sector in shelldataSectorList.DataSectorList)
+        foreach (DataSector sector in shellDataSectorList.DataSectorList)
         {
             Transform sectorTransform = Instantiate(_sectorTemplate, _containerSectors);
             sectorTransform.GetComponentInChildren<TextMeshProUGUI>().text = sector.DateTimeText;
