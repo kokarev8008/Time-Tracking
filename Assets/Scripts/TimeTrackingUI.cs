@@ -47,7 +47,7 @@ public class TimeTrackingUI : MonoBehaviour
             {
                 _pauseButton.gameObject.SetActive(true);
 
-                _startEndTimeTrackingText.text = "Stop";
+                _startEndTimeTrackingText.text = "Save";
             }
             else
             {
