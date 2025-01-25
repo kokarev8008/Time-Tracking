@@ -4,38 +4,52 @@ using UnityEngine;
 
 public class ControllerCase : MonoBehaviour
 {
-    public static ControllerCase Instance { get; private set; }
+    /// <summary>
+    /// Позволяет обратится к текущему последнему сектору и соответственно к экземпляру класса ControllerCase
+    /// </summary>
+    public static ControllerCase Singleton { get; private set; }
 
     [SerializeField] private Transform _containerCase;
     [SerializeField] private Transform _caseTemplate;
 
     private void Awake()
     {        
-        Instance = this;
+        Singleton = this;
 
-        ControllerSector.Instance.OnAddCase.RemoveAllListeners();
+        ControllerSector.Singleton.OnAddCase.RemoveAllListeners();
 
-        ControllerSector.Instance.OnAddCase.AddListener((obj) =>
+        ControllerSector.Singleton.OnAddCase.AddListener((obj) =>
         {
             Transform caseTransform = Instantiate(_caseTemplate, _containerCase);
             caseTransform.GetComponentInChildren<TextMeshProUGUI>().text = obj.CurrentTimeTracking;
 
-            ControllerSector.Instance.sectorsViewList[^1].caseViewsList.Add(caseTransform.AddComponent<CaseView>());
+            ControllerSector.Singleton.sectorsViewList[^1].caseViewsList.Add(caseTransform.AddComponent<CaseView>());
 
-            ControllerSector.Instance.shellDataSectorList.DataSectorList[^1].CaseList.Add(new DataSector.DataCase() 
+            ControllerSector.Singleton.shellDataSectorList.DataSectorList[^1].CaseList.Add(new DataSector.DataCase() 
             {
                 TimeTrackingText = obj.CurrentTimeTracking,
             });
 
-            JsonServiceUtility.SaveData(ControllerSector.Instance.shellDataSectorList);
+            JsonServiceUtility.SaveData(ControllerSector.Singleton.shellDataSectorList);
         });
     }
 
-    public void SpawnModificationCase(string timeTrackingText)
+    public void SpawnNotSerializationModificationCase(string timeTrackingText)
     {
         Transform caseTransform = Instantiate(_caseTemplate, _containerCase);
         caseTransform.GetComponentInChildren<TextMeshProUGUI>().text = timeTrackingText;
 
-        ControllerSector.Instance.sectorsViewList[^1].caseViewsList.Add(caseTransform.AddComponent<CaseView>());
+        ControllerSector.Singleton.sectorsViewList[^1].caseViewsList.Add(caseTransform.AddComponent<CaseView>());
+    }
+
+    public void DeleteCase(SectorView locationSectorView, CaseView caseForDelete)
+    {
+        ControllerSector.Singleton.shellDataSectorList
+            .DataSectorList[ControllerSector.Singleton.sectorsViewList.IndexOf(locationSectorView)]
+            .CaseList.RemoveAt(locationSectorView.caseViewsList.IndexOf(caseForDelete));
+
+        locationSectorView.caseViewsList.Remove(caseForDelete);
+
+        JsonServiceUtility.SaveData(ControllerSector.Singleton.shellDataSectorList);
     }
 }

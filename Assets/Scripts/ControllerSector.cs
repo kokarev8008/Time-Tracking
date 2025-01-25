@@ -4,10 +4,13 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class ControllerSector : MonoBehaviour
 {
-    public static ControllerSector Instance { get; private set; }
+    private const string VALUE_SCROLLBAR_PLAYER_PREFS = "ValueScrollbar";
+
+    public static ControllerSector Singleton { get; private set; }
 
     [HideInInspector] public UnityEvent<OnAddCaseAction> OnAddCase;
     public class OnAddCaseAction
@@ -18,6 +21,8 @@ public class ControllerSector : MonoBehaviour
     [SerializeField] private Transform _containerSectors;
     [SerializeField] private Transform _sectorTemplate;
 
+    [SerializeField] private Scrollbar _scrollbarControllerContainerSector;
+
     [HideInInspector] public ShellListDataSector shellDataSectorList;
     [HideInInspector] public List<SectorView> sectorsViewList = new();
 
@@ -25,12 +30,18 @@ public class ControllerSector : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
+        if (Singleton == null)
+            Singleton = this;
 
         shellDataSectorList = JsonServiceUtility.LoadData<ShellListDataSector>() ?? new ShellListDataSector();   
 
-        TimeTrackingUI.Instance.OnCheckSector.AddListener(TimeTrackingUI_OnAddSector);
+        TimeTrackingUI.Singleton.OnCheckSector.AddListener(TimeTrackingUI_OnAddSector);
+
+        _scrollbarControllerContainerSector.onValueChanged.AddListener((value) =>
+        {
+            PlayerPrefs.SetFloat(VALUE_SCROLLBAR_PLAYER_PREFS, value);
+            PlayerPrefs.Save();
+        });
     }
 
     private void Start()
@@ -80,10 +91,18 @@ public class ControllerSector : MonoBehaviour
             sectorsViewList.Add(sectorTransform.AddComponent<SectorView>());
 
             foreach (DataSector.DataCase cases in sector.CaseList)            
-                ControllerCase.Instance.SpawnModificationCase(cases.TimeTrackingText);
+                ControllerCase.Singleton.SpawnNotSerializationModificationCase(cases.TimeTrackingText);
             
             index++;
         }
+
+        //По непонятной причине нормализованное значение превышает границу 
+        //Для решения я ничего лучше не придумал чем просто присвоить value значение близкое к границе 
+        if (PlayerPrefs.GetFloat(VALUE_SCROLLBAR_PLAYER_PREFS) == 1)
+            _scrollbarControllerContainerSector.value = 0.95f;
+        else
+            _scrollbarControllerContainerSector.value = PlayerPrefs.GetFloat(VALUE_SCROLLBAR_PLAYER_PREFS, 0);
+
     }
 }
 

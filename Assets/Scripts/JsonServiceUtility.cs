@@ -11,7 +11,7 @@ public static class JsonServiceUtility
     /// </summary>
     /// <param name="data"></param>
     /// <param name="key"></param>
-    public static void SaveData(object data, string key = "ApplicationData.json")
+    public static void SaveData(object data, string key = "ApplicationData")
     {
         string jsonData = JsonUtility.ToJson(data, true);   
         
@@ -26,7 +26,7 @@ public static class JsonServiceUtility
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <returns></returns>
-    public static T LoadData<T>(string key = "ApplicationData.json")
+    public static T LoadData<T>(string key = "ApplicationData")
     {
         try
         {
@@ -45,6 +45,6 @@ public static class JsonServiceUtility
 
     private static string BuildPath(string key)
     {
-        return Path.Combine(Application.persistentDataPath, key);
+        return Path.Combine(Application.persistentDataPath, key + ".json");
     }
 }

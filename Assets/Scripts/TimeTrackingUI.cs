@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class TimeTrackingUI : MonoBehaviour
 {
-    public static TimeTrackingUI Instance { get; private set; }
+    public static TimeTrackingUI Singleton { get; private set; }
 
     [HideInInspector] public UnityEvent<OnCheckSectorAction> OnCheckSector;
     public class OnCheckSectorAction
@@ -36,8 +36,8 @@ public class TimeTrackingUI : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance == null) 
-            Instance = this;
+        if(Singleton == null) 
+            Singleton = this;
 
         _startEndTimeTrackingButton.onClick.AddListener(() =>
         {

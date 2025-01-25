@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1085407897482843571}
-  - component: {fileID: 8423169798999761214}
   - component: {fileID: 1737224092097271310}
+  - component: {fileID: 8423169798999761214}
   m_Layer: 5
   m_Name: SectorTemplate
   m_TagString: Untagged
@@ -39,20 +39,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 1080}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &8423169798999761214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 635921425960462152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4fb7adbd10bed7f418fb0d3c2a5bd434, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _containerCase: {fileID: 8481196952745373408}
-  _caseTemplate: {fileID: 9216525569982924004, guid: a11fd0ace97a1d341ae85e86b42c117b, type: 3}
 --- !u!114 &1737224092097271310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,6 +69,20 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8423169798999761214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635921425960462152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fb7adbd10bed7f418fb0d3c2a5bd434, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _containerCase: {fileID: 8481196952745373408}
+  _caseTemplate: {fileID: 9216525569982924004, guid: a11fd0ace97a1d341ae85e86b42c117b, type: 3}
 --- !u!1 &3954933140556440605
 GameObject:
   m_ObjectHideFlags: 0
