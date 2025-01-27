@@ -49,13 +49,13 @@ public class ControllerSector : MonoBehaviour
         LoadData();
     }
 
-    private void TimeTrackingUI_OnAddSector(TimeTrackingUI.OnCheckSectorAction obj)
+    private void TimeTrackingUI_OnAddSector(TimeTrackingUI.OnCheckSectorAction time)
     {
         if (dateTimesList.Contains(DateTime.Today.Date))
         {
             OnAddCase?.Invoke(new OnAddCaseAction
             {
-                CurrentTimeTracking = obj.CurrentTimeTracking,
+                CurrentTimeTracking = time.CurrentTimeTracking,
             });
         }
         else
@@ -74,7 +74,7 @@ public class ControllerSector : MonoBehaviour
             
             OnAddCase?.Invoke(new OnAddCaseAction
             {
-                CurrentTimeTracking = obj.CurrentTimeTracking,
+                CurrentTimeTracking = time.CurrentTimeTracking,
             });
         }
     }
@@ -91,7 +91,7 @@ public class ControllerSector : MonoBehaviour
             sectorsViewList.Add(sectorTransform.AddComponent<SectorView>());
 
             foreach (DataSector.DataCase cases in sector.CaseList)            
-                ControllerCase.Singleton.SpawnNotSerializationModificationCase(cases.TimeTrackingText);
+                ControllerCase.Singleton.SpawnNotSerializationModificationCase(cases.TimeTrackingText, cases.InfoText);
             
             index++;
         }
@@ -106,12 +106,18 @@ public class ControllerSector : MonoBehaviour
     }
 }
 
+/// <summary>
+/// —ериализуемый класс оболочка 
+/// </summary>
 [Serializable]
 public class ShellListDataSector
 {
     public List<DataSector> DataSectorList = new();
 }
 
+/// <summary>
+/// —ериализуемый класс дл€ хранени€ данных о секторе и о его кейсах
+/// </summary>
 [Serializable]
 public class DataSector
 {
@@ -123,5 +129,6 @@ public class DataSector
     public class DataCase
     {
         public string TimeTrackingText;
+        public string InfoText;
     }
 }
