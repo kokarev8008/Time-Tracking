@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+/// <summary>
+/// Выполняет основную логику с секторами
+/// </summary>
 public class ControllerSector : MonoBehaviour
 {
     private const string VALUE_SCROLLBAR_PLAYER_PREFS = "ValueScrollbar";
@@ -55,7 +58,7 @@ public class ControllerSector : MonoBehaviour
         {
             OnAddCase?.Invoke(new OnAddCaseAction
             {
-                CurrentTimeTracking = time.CurrentTimeTracking,
+                CurrentTimeTracking = time.CurrentTimeStr,
             });
         }
         else
@@ -74,7 +77,7 @@ public class ControllerSector : MonoBehaviour
             
             OnAddCase?.Invoke(new OnAddCaseAction
             {
-                CurrentTimeTracking = time.CurrentTimeTracking,
+                CurrentTimeTracking = time.CurrentTimeStr,
             });
         }
     }
@@ -107,7 +110,7 @@ public class ControllerSector : MonoBehaviour
 }
 
 /// <summary>
-/// Сериализуемый класс оболочка 
+/// Сериализуемый класс-оболочка 
 /// </summary>
 [Serializable]
 public class ShellListDataSector
@@ -129,6 +132,7 @@ public class DataSector
     public class DataCase
     {
         public string TimeTrackingText;
+
         public string InfoText;
     }
 }

@@ -1,7 +1,12 @@
+using System;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
+/// <summary>
+/// Выполняет основную логику внутри сектора с кейсами 
+/// </summary>
 public class ControllerCase : MonoBehaviour
 {
     /// <summary>
@@ -9,8 +14,16 @@ public class ControllerCase : MonoBehaviour
     /// </summary>
     public static ControllerCase Singleton { get; private set; }
 
+    [HideInInspector] public UnityEvent<OnViewUpdateTotalTimePerDayEvent> OnViewUpdateTotalTimePerDay;
+    public class OnViewUpdateTotalTimePerDayEvent
+    {
+        public TimeSpan timeSpan;
+    }
+
     [SerializeField] private Transform _containerCase;
     [SerializeField] private Transform _caseTemplate;
+
+    public TimeSpan TotalTimePerDay { get; private set; }
 
     private void Awake()
     {        
@@ -18,16 +31,21 @@ public class ControllerCase : MonoBehaviour
 
         ControllerSector.Singleton.OnAddCase.RemoveAllListeners();
 
-        ControllerSector.Singleton.OnAddCase.AddListener((obj) =>
+        ControllerSector.Singleton.OnAddCase.AddListener((time) =>
         {
+            TimeSpan timeSpan = TimeSpan.Parse(time.CurrentTimeTracking);
+            TotalTimePerDay += timeSpan;            
+
+            OnViewUpdateTotalTimePerDay?.Invoke(new OnViewUpdateTotalTimePerDayEvent { timeSpan = TotalTimePerDay });
+            
             Transform caseTransform = Instantiate(_caseTemplate, _containerCase);
-            caseTransform.GetComponentInChildren<TextMeshProUGUI>().text = obj.CurrentTimeTracking;
+            caseTransform.GetComponentInChildren<TextMeshProUGUI>().text = $"{timeSpan.Hours} h. {timeSpan.Minutes} min. {timeSpan.Seconds} sec.";
 
             ControllerSector.Singleton.sectorsViewList[^1].caseViewsList.Add(caseTransform.AddComponent<CaseView>());
 
             ControllerSector.Singleton.shellDataSectorList.DataSectorList[^1].CaseList.Add(new DataSector.DataCase() 
             {
-                TimeTrackingText = obj.CurrentTimeTracking,
+                TimeTrackingText = time.CurrentTimeTracking,
             });
 
             JsonServiceUtility.SaveData(ControllerSector.Singleton.shellDataSectorList);
@@ -35,17 +53,25 @@ public class ControllerCase : MonoBehaviour
     }
 
     /// <summary>
-    /// Спавнит несереализуемый CaseView в последним текущим секторе
+    /// Спавнит несереализуемый CaseView в последний текущий сектор
     /// </summary>
-    /// <param name="timeTrackingText"></param>
+    /// <param name="timeTrackingTextAsTimeSpan"></param>
     /// <param name="infoText"></param>
-    public void SpawnNotSerializationModificationCase(string timeTrackingText, string infoText = "")
+    public void SpawnNotSerializationModificationCase(string timeTrackingTextAsTimeSpan, string infoText = "")
     {
-        Transform caseTransform = Instantiate(_caseTemplate, _containerCase);
-        caseTransform.GetComponentInChildren<TextMeshProUGUI>().text = timeTrackingText;
+        if (TimeSpan.TryParse(timeTrackingTextAsTimeSpan, out TimeSpan timeSpan))
+        {
+            TotalTimePerDay += timeSpan;
 
-        ControllerSector.Singleton.sectorsViewList[^1].caseViewsList.Add(caseTransform.AddComponent<CaseView>());
-        caseTransform.GetComponent<CaseView>().GetComponentInChildren<TMP_InputField>().text = infoText;
+            Transform caseTransform = Instantiate(_caseTemplate, _containerCase);
+            caseTransform.GetComponentInChildren<TextMeshProUGUI>().text = $"{timeSpan.Hours} h. {timeSpan.Minutes} min. {timeSpan.Seconds} sec.";
+
+            OnViewUpdateTotalTimePerDay?.Invoke(new OnViewUpdateTotalTimePerDayEvent { timeSpan = TotalTimePerDay });
+
+            CaseView caseView = caseTransform.AddComponent<CaseView>();
+            ControllerSector.Singleton.sectorsViewList[^1].caseViewsList.Add(caseView);
+            caseView.GetComponentInChildren<TMP_InputField>().text = infoText;
+        }
     }
 
     /// <summary>
@@ -70,6 +96,12 @@ public class ControllerCase : MonoBehaviour
     /// <param name="caseForDelete"></param>
     public void DeleteCase(SectorView locationSectorView, CaseView caseForDelete)
     {
+        TotalTimePerDay -= TimeSpan.Parse(ControllerSector.Singleton.shellDataSectorList
+            .DataSectorList[ControllerSector.Singleton.sectorsViewList.IndexOf(locationSectorView)]
+            .CaseList[locationSectorView.caseViewsList.IndexOf(caseForDelete)].TimeTrackingText);
+
+        OnViewUpdateTotalTimePerDay?.Invoke(new OnViewUpdateTotalTimePerDayEvent() { timeSpan = TotalTimePerDay });
+
         ControllerSector.Singleton.shellDataSectorList
             .DataSectorList[ControllerSector.Singleton.sectorsViewList.IndexOf(locationSectorView)]
             .CaseList.RemoveAt(locationSectorView.caseViewsList.IndexOf(caseForDelete));

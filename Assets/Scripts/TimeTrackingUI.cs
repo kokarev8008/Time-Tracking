@@ -12,7 +12,7 @@ public class TimeTrackingUI : MonoBehaviour
     [HideInInspector] public UnityEvent<OnCheckSectorAction> OnCheckSector;
     public class OnCheckSectorAction
     {
-        public string CurrentTimeTracking;
+        public string CurrentTimeStr;
     }
 
     [SerializeField] private Button _startEndTimeTrackingButton;
@@ -62,7 +62,7 @@ public class TimeTrackingUI : MonoBehaviour
 
                 OnCheckSector?.Invoke(new OnCheckSectorAction
                 {
-                    CurrentTimeTracking = _timeText.text
+                    CurrentTimeStr = new TimeSpan((int)timerHour, (int)timerMin, (int)timerSec).ToString(),
                 });
 
                 timerSec = 0;
